@@ -54,6 +54,27 @@ async function run() {
       res.send(result);
     });
 
+    // get a single job data by id form id
+    app.get("/job/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await jobsCollection.findOne(query);
+      res.send(result);
+    });
+
+    // save a jobData in db
+    app.put("/update-job/:id", async (req, res) => {
+      const id = req.params.id;
+      const jobData = req.body;
+      const updated = {
+        $set: jobData,
+      };
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const result = await jobsCollection.updateOne(query, updated, options);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
